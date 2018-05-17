@@ -191,5 +191,7 @@ void CCardBox::RandNopenBox()
         *it_box1 = *it_box2;
         *it_box2 = index_card;
     }
+
+
 }
 

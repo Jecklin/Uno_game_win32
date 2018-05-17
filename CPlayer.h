@@ -4,7 +4,7 @@
 #include "CCardBox.h"
 #include <string>
 
-class CPlayer:public CCardBox
+class CPlayer
 {
 public:
     CPlayer();
@@ -20,7 +20,11 @@ public:
     std::string GetPlayerName() const;
     void SetPlayerName(const std::string &name);
 
+    CCardBox GetPlayerBox() const;
+    void SetPlayerBox(const CCardBox &box);
+
 private:
+    CCardBox        m_player_box;
     int             m_player_score;
     std::string     m_player_name;
 };

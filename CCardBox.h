@@ -9,7 +9,7 @@ class CCardBox
 {
 public:
     CCardBox();
-    virtual ~CCardBox();
+    ~CCardBox();
 
     CCardBox(const CCardBox &other);
     CCardBox &operator = (const CCardBox &other);
@@ -29,7 +29,7 @@ public:
     void InitNopenBox();
     void RandNopenBox();
 
-protected:
+private:
     std::list<CCardInfo>          m_box;
 };
 

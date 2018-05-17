@@ -127,17 +127,13 @@ void CTest::PrintBox(CCardBox &box)
 
 void CTest::PrintPlayer(CPlayer &player)
 {
-    CCardBox::IterBox it;
-    CCardInfo card;
+
+    CCardBox box = player.GetPlayerBox();
     cout << "name: " << player.GetPlayerName() << " "
          << "score:" << player.GetPlayerScore() << " "
-         << "box size: " << player.GetSize() << endl;
+         << "box size: " << box.GetSize() << endl;
     cout << "cards:" << endl;
-    for (it = player.GetItBegin(); it != player.GetItEnd(); ++it)
-    {
-        card = *it;
-        this->PrintCard(card);
-    }
+    PrintBox(box);
     cout << endl;
 
 }

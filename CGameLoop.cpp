@@ -39,6 +39,7 @@ void CGameLoop::GameInit()
 {
     cout << "**********  Game Init  **********" << endl;
     CCardBox::IterBox it_nbox;
+    CCardBox player_box;
     CCardInfo card_index;
     int len_nbox = 0;
 
@@ -87,7 +88,9 @@ void CGameLoop::GameInit()
             it_nbox = this->m_box_notopen.GetItBegin();
             card_index = *it_nbox;
 
-            this->m_players[i].AddCard(card_index);
+            player_box = this->m_players[i].GetPlayerBox();
+            player_box.AddCard(card_index);
+            this->m_players[i].SetPlayerBox(player_box);
             this->m_box_notopen.RemoveCard(card_index);
 
         }
@@ -114,11 +117,13 @@ void CGameLoop::GameLoop()
 {
     cout << "**********  Game Loop  **********" << endl;
     CPlayer *pplayer = nullptr;
+    CCardBox player_box;
     do
     {
         pplayer = &this->m_players[this->m_current];
+        player_box = pplayer->GetPlayerBox();
         //**1.判定当前玩家是否为胜者
-        if (pplayer->IsEmpty())
+        if (player_box.IsEmpty())
         {
             this->m_winner = *pplayer;
             break;
@@ -162,7 +167,8 @@ void CGameLoop::GameLoop()
     for (int index = 0; index < this->m_player_count; ++index)
     {
         pplayer = &this->m_players[index];
-        score = pplayer->GetPlayerScore() - pplayer->GetSize();
+        player_box = pplayer->GetPlayerBox();
+        score = pplayer->GetPlayerScore() - player_box.GetSize();
         pplayer->SetPlayerScore(score);
     }
     this->m_winner.SetPlayerScore(this->m_winner.GetPlayerScore() + 10);
@@ -184,15 +190,16 @@ void CGameLoop::GameOver()
 void CGameLoop::MyRound(CPlayer *pplayer)
 {
     CCardBox::IterBox it_box;
+    CCardBox my_box = pplayer->GetPlayerBox();
     CCardInfo out_card;
     CTest test;
     int number = 0;
     int choice = 0;
 
     cout << "-------------------------------" << endl;
-    cout << "Now you have " << pplayer->GetSize() << " cards: " << endl;
+    cout << "Now you have " << my_box.GetSize() << " cards: " << endl;
 
-    for (it_box = pplayer->GetItBegin(); it_box != pplayer->GetItEnd(); ++it_box)
+    for (it_box = my_box.GetItBegin(); it_box != my_box.GetItEnd(); ++it_box)
     {
         cout << number << " : ";
         test.PrintCard(*it_box);
@@ -205,7 +212,7 @@ void CGameLoop::MyRound(CPlayer *pplayer)
     cin >> choice;
     do
     {
-        it_box = pplayer->GetItBegin();
+        it_box = my_box.GetItBegin();
         for (int index = 0; index < choice; ++index)
         {
             ++it_box;
@@ -226,7 +233,8 @@ void CGameLoop::MyRound(CPlayer *pplayer)
             this->m_endcard.SetId(out_card.GetId());
 
             //我出牌
-            pplayer->RemoveCard(out_card);
+            my_box.RemoveCard(out_card);
+            pplayer->SetPlayerBox(my_box);
 
             //执行功能牌
             if (out_card.GetAction() & 0xF)
@@ -241,7 +249,7 @@ void CGameLoop::MyRound(CPlayer *pplayer)
             break;
         }
         //选择不出，摸牌
-        else if (number == 111)
+        else if (choice == 111)
         {
             CCardInfo add_card;
             CCardBox::IterBox it_not_box = this->m_box_notopen.GetItBegin();
@@ -250,7 +258,8 @@ void CGameLoop::MyRound(CPlayer *pplayer)
                 this->RecycleOpenBox();;
             }
             add_card = *it_not_box;
-            pplayer->AddCard(add_card);
+            my_box.AddCard(add_card);
+            pplayer->SetPlayerBox(my_box);
             this->m_box_notopen.RemoveCard(add_card);
             break;
         }
@@ -269,12 +278,13 @@ void CGameLoop::MyRound(CPlayer *pplayer)
 void CGameLoop::OtherRound(CPlayer *pplayer)
 {
     CCardBox::IterBox it_box;
+    CCardBox player_box = pplayer->GetPlayerBox();
     CCardInfo out_card;
     CCardInfo index_card;
     bool allow_out = false;
 
     //查询电脑牌库
-    for (it_box = pplayer->GetItBegin(); it_box != pplayer->GetItEnd(); ++it_box)
+    for (it_box = player_box.GetItBegin(); it_box != player_box.GetItEnd(); ++it_box)
     {
         index_card = *it_box;
 
@@ -303,7 +313,8 @@ void CGameLoop::OtherRound(CPlayer *pplayer)
         this->m_endcard.SetId(out_card.GetId());
 
         //玩家牌库减牌
-        pplayer->RemoveCard(out_card);
+        player_box.RemoveCard(out_card);
+        pplayer->SetPlayerBox(player_box);
 
         //*********** 测试 ************//
         cout << pplayer->GetPlayerName() << " Out card: ";
@@ -333,7 +344,8 @@ void CGameLoop::OtherRound(CPlayer *pplayer)
             this->RecycleOpenBox();;
         }
         add_card = *it_not_box;
-        pplayer->AddCard(add_card);
+        player_box.AddCard(add_card);
+        pplayer->SetPlayerBox(player_box);
         this->m_box_notopen.RemoveCard(add_card);
 
         //*********** 测试 ************//
@@ -395,6 +407,7 @@ void CGameLoop::ActionCardIn(int num)
     }
 
     CPlayer *pplayer_act = &this->m_players[action_state];
+    CCardBox player_box = pplayer_act->GetPlayerBox();
     CCardInfo action_card;
     CCardBox::IterBox it_box_not;
     for (int touch = 0; touch < num; ++touch)
@@ -407,7 +420,8 @@ void CGameLoop::ActionCardIn(int num)
         it_box_not = this->m_box_notopen.GetItBegin();
         action_card = *it_box_not;
 
-        pplayer_act->AddCard(action_card);
+        player_box.AddCard(action_card);
+        pplayer_act->SetPlayerBox(player_box);
         this->m_box_notopen.RemoveCard(action_card);
 
 
@@ -464,7 +478,8 @@ void CGameLoop::ActionCardReverse()
 void CGameLoop::ActionCardChangeColor()
 {
     CPlayer *pplayer_act = &this->m_players[this->m_current];
-    CCardBox::IterBox it_box = pplayer_act->GetItBegin();
+    CCardBox action_box = pplayer_act->GetPlayerBox();
+    CCardBox::IterBox it_box = action_box.GetItBegin();
     CCardInfo index_card;
 
     int sum_red    = 0;
@@ -472,7 +487,7 @@ void CGameLoop::ActionCardChangeColor()
     int sum_blue   = 0;
     int sum_green  = 0;
 
-    for (it_box = pplayer_act->GetItBegin(); it_box != pplayer_act->GetItEnd(); ++it_box)
+    for (it_box = action_box.GetItBegin(); it_box != action_box.GetItEnd(); ++it_box)
     {
         index_card = *it_box;
         if (index_card.GetColor() == ECC_Red)
