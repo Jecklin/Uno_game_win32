@@ -7,21 +7,24 @@ class CCardInfo
 {
 public:
     CCardInfo();
-    CCardInfo(ECardColor color, ECardId id, ECardAction action);
     virtual ~CCardInfo();
 
+    CCardInfo(ECardColor color, ECardId id, ECardAction action);
     CCardInfo(const CCardInfo &other);
-    CCardInfo& operator=(const CCardInfo &other);
-    bool operator ==(const CCardInfo &other);
+
+    CCardInfo& operator =   (const CCardInfo &other);
+    bool       operator ==  (const CCardInfo &other) const;
 
 public:
-    ECardColor GetColor() const;
-    ECardId GetId() const;
-    ECardAction GetAction() const;
+    ECardColor   getColor()  const;
+    ECardId      getId()     const;
+    ECardAction  getAction() const;
+    bool         isFunctionCard();
 
 protected:
     ECardColor   m_color;
     ECardId      m_id;
     ECardAction  m_action;
 };
+
 #endif // CCARDINFO_H

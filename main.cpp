@@ -4,9 +4,8 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-
-    CGameLoop mainloop;
-    mainloop.GameStart();
+    CGameLoop game;
+    game.gameStart();
 
     return a.exec();
 }

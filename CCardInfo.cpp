@@ -1,5 +1,6 @@
 #include "CCardInfo.h"
 
+
 CCardInfo::CCardInfo()
     :m_color(ECC_Invalid)
     ,m_id(ECI_Invalid)
@@ -41,7 +42,7 @@ CCardInfo &CCardInfo::operator=(const CCardInfo &other)
     return *this;
 }
 
-bool CCardInfo::operator ==(const CCardInfo &other)
+bool CCardInfo::operator ==(const CCardInfo &other) const
 {
     bool issame = false;
     if ((this->m_action == other.m_action)
@@ -57,17 +58,22 @@ bool CCardInfo::operator ==(const CCardInfo &other)
     return issame;
 }
 
-ECardColor CCardInfo::GetColor() const
+bool CCardInfo::isFunctionCard()
+{
+    return (this->getAction() & 0xF);
+}
+
+ECardColor CCardInfo::getColor() const
 {
     return this->m_color;
 }
 
-ECardId CCardInfo::GetId() const
+ECardId CCardInfo::getId() const
 {
     return this->m_id;
 }
 
-ECardAction CCardInfo::GetAction() const
+ECardAction CCardInfo::getAction() const
 {
     return this->m_action;
 }
