@@ -5,6 +5,7 @@ CPlayer::CPlayer()
     :m_score()
     ,m_name()
     ,m_box()
+    ,m_outcard()
 {
     ;
 }
@@ -77,6 +78,7 @@ bool CPlayer::isAllowOut(const CCardInfo &card)
             if (card_index.getColor() & card.getColor())
             {
                 is_allow = true;
+                this->m_outcard = card_index;
             }
             else
             {
@@ -95,6 +97,7 @@ bool CPlayer::isAllowOut(const CCardInfo &card)
             if ((card_index.getId() == card.getId()) || (card_index.getColor() & card.getColor()))
             {
                 is_allow = true;
+                this->m_outcard = card_index;
             }
             else
             {
@@ -114,6 +117,7 @@ bool CPlayer::isAllowOut(const CCardInfo &my_card, const CCardInfo &end_card)
         if (my_card.getColor() & end_card.getColor())
         {
             is_allow = true;
+            this->m_outcard = my_card;
         }
         else
         {
@@ -127,6 +131,7 @@ bool CPlayer::isAllowOut(const CCardInfo &my_card, const CCardInfo &end_card)
         if ((my_card.getId() == end_card.getId()) || (my_card.getColor() & end_card.getColor()) )
         {
             is_allow = true;
+            this->m_outcard = my_card;
         }
         else
         {
@@ -134,6 +139,11 @@ bool CPlayer::isAllowOut(const CCardInfo &my_card, const CCardInfo &end_card)
         }
     }
     return is_allow;
+}
+
+CCardInfo CPlayer::getOutCard()
+{
+    return this->m_outcard;
 }
 
 void CPlayer::playerOutCard(const CCardInfo &card)
@@ -146,6 +156,12 @@ void CPlayer::playerOutCard(const CCardInfo &card)
         if (card == card_index)
         {
             this->m_box.erase(iter);
+            
+            //Test
+            std::cout << this->m_name << " Out card: ";
+            this->printCard(card);
+            std::cout << std::endl;
+            
             break;
         }
         else
@@ -159,6 +175,11 @@ void CPlayer::playerOutCard(const CCardInfo &card)
 void CPlayer::playerInCard(const CCardInfo &card)
 {
     this->m_box.push_back(card);
+    
+    //Test
+    std::cout << this->m_name << " In card: ";
+    this->printCard(card);
+    std::cout << std::endl;
 }
 
 CCardInfo CPlayer::getSimilarCard(const CCardInfo &card)

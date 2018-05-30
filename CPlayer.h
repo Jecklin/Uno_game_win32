@@ -29,6 +29,7 @@ public:
     //Action
     bool            isAllowOut(const CCardInfo &card);
     bool            isAllowOut(const CCardInfo &my_card, const CCardInfo &end_card);
+    CCardInfo       getOutCard();
     void            playerOutCard(const CCardInfo &card);
     void            playerInCard(const CCardInfo &card);
     CCardInfo       getSimilarCard(const CCardInfo &card);
@@ -46,5 +47,6 @@ private:
     int             m_score;
     std::string     m_name;
     CBox            m_box;
+    CCardInfo       m_outcard;
 };
 #endif // CPLAYER_H
